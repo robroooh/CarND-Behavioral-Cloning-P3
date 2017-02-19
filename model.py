@@ -3,15 +3,32 @@ from skimage import exposure
 from skimage.transform import resize
 from scipy.misc import imresize
 
-## define function for data augmentation
 def brightness(image):
+    """
+    Adjust the brightness of the image randomly
+    in the gain range of 0.3-0.6.
+    :image: an ndarray image
+    :output: an ndarray image that is brightness adjusted
+    """
     gain = (np.random.randint(3)+3)/10
     return exposure.adjust_gamma(image, gamma=1.0, gain=gain)
 
 def my_resize(image):
+    """
+    Resizing the image to (128,128,3)
+    :image: an ndarray image
+    :output: an ndarray image that is resized
+    """
     return imresize(image, size=(128,128,3))
 
 def pix_val(im):
+    """
+    Cast a vertical shadow on image, randomly reduce intensity of
+    all rgb channels by 70-120.
+    :im: an ndarray image
+    :output: an ndarray image that its brightness is 
+    partially adjusted
+    """
     cons = (np.random.randint(6)+7)*10
     for idx,val in enumerate(im):
         for idx2,val2 in enumerate(val):
@@ -24,6 +41,12 @@ def pix_val(im):
     return im
 
 def random_shadow(image):
+    """
+    To random which part of the image the shadow will cast on
+    :image: an ndarray image
+    :output: an ndarray image that its brightness is 
+    partially adjusted
+    """
     lo_bound = np.random.randint(0,88)
     hi_bound = lo_bound + 40
     new_img = image.copy()
@@ -31,9 +54,20 @@ def random_shadow(image):
     return new_img
 
 def flipping(image):
+    """
+    Flip the image along the horizontal axis
+    :image: an ndarray image
+    :output: an ndarray image that is flipped
+    """
     return np.fliplr(image)
 
 def process_image(img):
+    """
+    Flip a coin and decide on whether the image will be 
+    brightness adjusted or cast a shadow
+    :image: an ndarray image
+    :output: an ndarray image that is processed
+    """
     resized = my_resize(img)
     if np.random.randint(2) == 1:
         processed_img = brightness(resized)
@@ -75,6 +109,16 @@ from PIL import Image
 # 2. for validation set which to validate the model by feeding only center-camera image
 
 def generator(samples, batch_size=32):
+    """
+    Generator for Training dataset Doing data augmentation by
+    1. Adjusting the steering correction of left/right image
+    2. Pre-Process left/center/right images by brightness adjustment or shadown casting
+    3. Flip the images along the horizontal-axis
+    4. Pre-Process the flipped images
+    :sample: a list of rows read from driving_log.csv
+    :batch_size: the number of batch
+    :output: a tuple of (images, steering angle)
+    """
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         shuffle(samples)
@@ -138,6 +182,13 @@ def generator(samples, batch_size=32):
             
 # just like the train generator() but get only the center image and steering center
 def valid_generator(samples, batch_size=32):
+    """
+    Generator for validation dataset just like the generator() 
+    but get only the center image and steering center
+    :sample: a list of rows read from driving_log.csv
+    :batch_size: the number of batch
+    :output: a tuple of (images, steering angle)
+    """
     num_samples = len(samples)
     while 1: # Loop forever so the generator never terminates
         shuffle(samples)
