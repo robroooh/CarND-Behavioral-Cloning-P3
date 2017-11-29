@@ -11,6 +11,8 @@
 [augment]: /report_img/data_augment1.png "Data Augmentation"
 [train_valid]: /report_img/train_valid.png "Train/Validate loss"
 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/Wtxhrw1ssmU" frameborder="0" allowfullscreen></iframe>
+
 ## Rubric Points
 ### Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/432/view) individually and describe how I addressed each point in my implementation.  
 
